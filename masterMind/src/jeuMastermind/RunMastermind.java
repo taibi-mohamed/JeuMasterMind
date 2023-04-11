@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Scanner;
 
-public class Lanceur4 {
+public class RunMastermind {
 
 	// pour lancer le programme
 
@@ -18,14 +18,14 @@ public class Lanceur4 {
 		do {
 
 			// on genere une combinaison aléatoire de 4 couleurs parmi une liste predefinie
-			// de 11
-			// couleurs
+			// de 11 couleurs
 			List<String> listeCouleurOrdinateur = donneMoiDesCouleursAuHasard(4);
 
-			// on compare la proposition du joueur avec la combinaison générée
+			// on compare la proposition du joueur avec la combinaison
+			// générée par l'ordinateur
 			demandeALutilisateurDeDevinerLesCouleurs(listeCouleurOrdinateur);
 
-			// on demande à l'utilisateur de rejouer
+			// on demande à l'utilisateur de rejouer ou pas
 			rejouer = finDePartie();
 
 			// tant que le joueur repond oui
@@ -34,9 +34,8 @@ public class Lanceur4 {
 	}
 
 	private static List<String> donneMoiDesCouleursAuHasard(int nbrDeCouleurSouhaitee) {
-		nbrDeCouleurSouhaitee--;// on decrimente nbre de couleur -1 pour l index 0
-		// etape 1 definition des couleurs
 
+		// etape 1 definition des couleurs
 		List<String> mesCouleurs = new ArrayList<String>();
 
 		mesCouleurs.add("rouge");
@@ -65,16 +64,17 @@ public class Lanceur4 {
 
 				+ "\n1.Deviner la combinaison de 4 couleur."
 				+ "\n2.Elle peut contenir 1 ou plusieurs couleurs identique."
-
-				+ "\n3.Vous avez 12 essais pour gagner.\n");
+				+ "\n3.v = bonne couleur a la bonne place ." + "\n4.! = bonne couleur mais pas a la bonne place ."
+				+ "\n5.x = mauvaise couleur." + "\n6.Vous avez 12 essais pour gagner.\n");
 
 		System.out.println("_____La liste des couleurs____\n" + mesCouleurs);
 
 		// etape 2 generer chiffre aléatoire
-
 		List<Integer> maCombinaisonAléatoire = new ArrayList<>();
 
 		Random r = new Random();
+
+		nbrDeCouleurSouhaitee--;// on decremente nbre de couleur de -1 pour coller avec l'index 0
 
 		// le nombre de tour dépend du nombre de couleurs à trouver
 		for (int i = 0; i <= nbrDeCouleurSouhaitee; i++) {
@@ -87,21 +87,20 @@ public class Lanceur4 {
 
 		}
 
-		// etape3 on fait le mapping entre chiffre et couleurs
+		// etape3 on fait le mapping entre chiffres et couleurs
 		List<String> couleursAdeviner = new ArrayList<>();
 
-		for (Integer monchiffre : maCombinaisonAléatoire) {
+		for (int monchiffre : maCombinaisonAléatoire) {
 			// on recupere la couleur a l'index du chiffre
 			String couleur = mesCouleurs.get(monchiffre);
 
 			// on stock la couleur dans la liste de couleurs à deviner
 			couleursAdeviner.add(couleur);
-
 		}
 
 		// Ligne presente pendant les tests pour s'assurer du bon deroulement de
 		// l'application
-		// System.out.println(couleursAdeviner);
+		System.out.println(couleursAdeviner);
 
 		// a la fin des 4 tours, on renvoie la combinaison de couleurs à deviner
 		return couleursAdeviner;
@@ -121,35 +120,36 @@ public class Lanceur4 {
 
 		Scanner scanner = new Scanner(System.in);
 
-		// on crée une boucle do while
+		// on crée une boucle do while sur la partie
 		do {
 
 			// on efface le resultat du precedent passage
 			resultat.clear();
 
+			// RECUPERATION SAISIE UTILISATEUR
 			System.out.println("Essai N° " + numeroEssai);
 
-			System.out.println("Faites votre combinaison:");
+			System.out.println("Faites votre combinaison de couleurs avec un espace entre elles :");
 
 			// on recupere la proposition de l'utilisateur
-
 			String couleursUtilisateur = scanner.nextLine();
 
 			// on decoupe la proposition de l'utilisateur en tableau de string
 			String[] propositionUtilisateur = couleursUtilisateur.split(" ");
 
-			// on defini la liste des valeurs acceptées
+			// CONTROLE DES PARAMETRES
+			// on defini la liste des couleurs acceptées
 			String pattern = "^(rouge|bleu|noir|vert|blanc|violet|jaune|orange|beige|gris|fisha)$";
 
-			// Controle des parametres
 			Boolean saisiOK = Boolean.FALSE;
 			// Tant que la saisie n'est pas ok, on boucle
 			while (!saisiOK) {
 
 				saisiOK = true;
-				// on compare si les couleurs sont présentes dans la liste du pattern
+				// on boucle sur les couleurs de l'utilisateur
 				for (int i = 0; i < propositionUtilisateur.length; i++) {
-					// des qu'une couleur n'est pas presente dans la liste, on sort de cette boucle
+					// on compare les couleurs : des qu'une couleur n'est pas presente dans la
+					// liste ou mal orthographiée, on sort de cette boucle
 					if (!propositionUtilisateur[i].matches(pattern)) {
 
 						saisiOK = false;
@@ -172,6 +172,7 @@ public class Lanceur4 {
 
 			}
 
+			// COMPARAISON ENTRE LA COMBINAISON SECRETE ET LA PROPOSITION DE L'UTILISATEUR
 			for (int i = 0; i < propositionUtilisateur.length; i++) {
 
 				String couleurUtilisateurIndexI = propositionUtilisateur[i];
@@ -210,27 +211,28 @@ public class Lanceur4 {
 
 			essaisRestants--;
 
-			numeroEssai++;
-
+			// CONTROLE SUR LA VICTOIRE
 			if (resultat.equals(victoire)) {
 
-				System.out.println("Félicitations, vous avez gagné en " + (numeroEssai) + " coup(s) !");
+				System.out.println("Felicitations, vous avez gagne en " + (numeroEssai) + " coup(s) !");
 
 				break;
 
 			}
 
+			// CONTROLE SUR LE NOMBRE D'ESSAIS RESTANTS
 			if (essaisRestants == 0) {
-
 				System.out.println(
-						"Désolé, vous avez épuisé tous vos essais. La combinaison était " + combinaisonSecrete);
+						"Desole, vous avez epuise tous vos essais. La combinaison etait :" + combinaisonSecrete);
 
 			} else {
-
+				numeroEssai++;
 				System.out.println("Il vous reste :" + essaisRestants + " essais");
 
 			}
 
+			// TANT QUE LA VICTOIRE N'EST PAS LA ET QUE
+			// LE NOMBRE D'ESSAIS RESTANTS N'EST PAS EGAL A 0
 		} while (!resultat.equals(victoire) && !(essaisRestants == 0));
 
 	}
@@ -255,7 +257,7 @@ public class Lanceur4 {
 
 		} else {
 
-			System.out.println("À bientôt !");
+			System.out.println("A bientot !");
 
 		}
 		return nouvellePartie;
